@@ -1,0 +1,13 @@
+[
+  {
+      "model": "levelupapi.event",
+      "pk": 1,
+      "fields": {
+          "game": 1,
+          "description": "Sad game for losers",
+          "date": "2023-01-10",
+          "time": "10:01",
+          "organizer": 1
+      }
+  }
+]
