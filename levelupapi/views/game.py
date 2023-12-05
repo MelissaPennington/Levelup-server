@@ -5,24 +5,22 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 from levelupapi.models import Game, Gamer, GameType
 
-
 class GameView(ViewSet):
-    """Level up game types view"""
+    """Level up game view"""
 
     def retrieve(self, request, pk):
-        """Handle GET requests for single game
+        """Handle GET requests for single game type
 
         Returns:
-            Response -- JSON serialized game
+            Response -- JSON serialized game type
         """
-            # Retrieve a single Game from the database based on the pk
-        game = Game.objects.get(pk=pk)
 
-            # Serialize the retrieved GameType
-        serializer = GameSerializer(game)
-
-            # Return the serialized data as a JSON response
-        return Response(serializer.data)
+        try:
+            game = Game.objects.get(pk=pk)
+            serializer = GameSerializer(game)
+            return Response(serializer.data)
+        except Game.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
 
     def list(self, request):
@@ -31,20 +29,20 @@ class GameView(ViewSet):
         Returns:
             Response -- JSON serialized list of game types
         """
-            # Retrieve a single GameType from the database based on the pk
         game = Game.objects.all()
 
-            # Serialize the retrieved GameType
-        serializer = GameSerializer(game, many=True)
+        game_type = request.query_params.get('type', None)
+        if game_type is not None:
+            game = game.filter(game_type_id=game_type)
 
-            # Return the serialized data as a JSON response
+        serializer = GameSerializer(game, many=True)
         return Response(serializer.data)
 
     def create(self, request):
         """Handle POST operations
 
         Returns
-        Response -- JSON serialized game instance
+            Response -- JSON serialized game instance
         """
         gamer = Gamer.objects.get(uid=request.data["userId"])
         game_type = GameType.objects.get(pk=request.data["gameType"])
@@ -78,15 +76,17 @@ class GameView(ViewSet):
         game.save()
 
         return Response(None, status=status.HTTP_204_NO_CONTENT)
-  
+
     def destroy(self, request, pk):
+        """ DELETE """
         game = Game.objects.get(pk=pk)
         game.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
-        
+
 class GameSerializer(serializers.ModelSerializer):
-    """JSON serializer for game 
+    """JSON serializer for game types
     """
     class Meta:
         model = Game
         fields = ('id', 'game_type', 'title', 'maker', 'gamer', 'number_of_players', 'skill_level')
+        depth = 1

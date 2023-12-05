@@ -4,9 +4,20 @@
       "pk": 1,
       "fields": {
           "game": 1,
-          "description": "Sad game for losers",
-          "date": "2023-01-10",
-          "time": "10:01",
+          "description": "Sad Game",
+          "date": "2023-05-21",
+          "time": "10:00:00",
+          "organizer": 1
+      }
+  },
+  {
+      "model": "levelupapi.event",
+      "pk": 2,
+      "fields": {
+          "game": 2,
+          "description": "The Beast",
+          "date": "2014-05-30",
+          "time": "09:00:00",
           "organizer": 1
       }
   }

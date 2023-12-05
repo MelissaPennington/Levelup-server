@@ -15,14 +15,12 @@ class GameTypeView(ViewSet):
         Returns:
             Response -- JSON serialized game type
         """
-            # Retrieve a single GameType from the database based on the pk
-        game_type = GameType.objects.get(pk=pk)
-
-            # Serialize the retrieved GameType
-        serializer = GameTypeSerializer(game_type)
-
-            # Return the serialized data as a JSON response
-        return Response(serializer.data)
+        try:
+            game_type = GameType.objects.get(pk=pk)
+            serializer = GameTypeSerializer(game_type)
+            return Response(serializer.data)
+        except GameType.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
 
     def list(self, request):
@@ -31,15 +29,10 @@ class GameTypeView(ViewSet):
         Returns:
             Response -- JSON serialized list of game types
         """
-            # Retrieve a single GameType from the database based on the pk
+
         game_types = GameType.objects.all()
-
-            # Serialize the retrieved GameType
         serializer = GameTypeSerializer(game_types, many=True)
-
-            # Return the serialized data as a JSON response
         return Response(serializer.data)
-
 
 class GameTypeSerializer(serializers.ModelSerializer):
     """JSON serializer for game types
